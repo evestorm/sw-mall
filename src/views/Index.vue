@@ -1,6 +1,7 @@
 <template>
   <div class="index">
     <h1>{{msg}}</h1>
+    <header></header>
   </div>
 </template>
 
@@ -16,5 +17,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-
+header
+  width px2rem(750px)
+  height px2rem(100px)
+  background-color pink
 </style>

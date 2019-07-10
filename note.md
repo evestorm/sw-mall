@@ -71,7 +71,7 @@ d config files
 4. 删除 `src/router.js` 中和 `Home.vue` 以及 `About.vue` 有关的代码
 5. 删除 `src/App.vue` 中和 `Home.vue` 以及 `About.vue` 有关的代码；同时移除样式中 `#nav` 相关的代码
 
-#### 添加需要的内容
+### 添加需要的内容
 
 1.在 `src/views/` 下新建 `Index/vue` 文件：
 
@@ -134,5 +134,107 @@ d config files
     color: black;
   }
   ```
+  然后在 `public/index.html` 中引入：`<link rel="stylesheet" href="css/reset.css">`
 
 现在打开浏览器访问 `http://localhost:8080/` ，它应该能正常工作并显示「Hello Element」字样。
+
+### rem适配
+
+由于我们的商城应用是面向移动端的，所以屏幕的适配是跑不了的。本次项目我们将采用 rem 布局的实现方式。
+
+p.s. 不了解 rem 布局的，可以先阅读[这篇文章](https://segmentfault.com/a/1190000019207842)
+
+首先更改 `public/index.html` 中的 viewport：
+
+```html
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+```
+
+然后通过代码来控制 rem 的基准值（仍然在 index.html 中增加）：
+
+```html
+<body>
+  ...
+  <script>
+  ;(function(doc, win) {
+    const docEl = doc.documentElement
+    const resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize'
+    const recalc = () => {
+      const clientWidth = docEl.clientWidth
+      docEl.style.fontSize = clientWidth / 10 + 'px'
+    }
+    if (!doc.addEventListener) return
+    win.addEventListener(resizeEvt, recalc, false)
+    doc.addEventListener('DOMContentLoaded', recalc, false)
+    recalc()
+  })(document, window)
+  </script>
+</body>
+```
+
+这样我们就把当前设备的宽度划分成了10等份，每等份就是 1rem。
+
+现在我们来测试下效果，来到我们的 `src/views/Index.vue` 页面，在 h1 标签下添加一行 `header` 标签：
+
+```html
+<div class="index">
+  <h1>{{msg}}</h1>
+  <header></header>
+</div>
+```
+
+我们假定需要让这个 header 标签宽度在设计稿宽度为 750px 的 iPhone6 等设备下宽度100%，高100px。我们则可以给它设置如下样式：
+
+```css
+header
+  width 10rem /* 计算公式：页面元素的rem值 = 页面元素值（px）/（屏幕宽度 / 划分的份数）= 750 / (750 / 10) */
+  height 1.333333333rem
+  background-color pink
+```
+
+回到页面你会发现效果很赞，header标签的大小将表现为随着浏览器宽度的变化而等比缩放。
+
+然而我们程序员都是“偷懒”，上面的计算一次还好，但整个项目可不止一个元素需要换算，每一个都用上述公式计算可会累死。所以我们接下来会借助 stylus 预处理器定义一个全局方法，每次设置值的时候调用它，让它返回给我们根据公式计算出的对应px的rem值。
+
+我们来到 `public/css` 目录，新建一个 `common.styl` 文件，在里面定义转化rem值的方法：
+
+```js
+px2rem(designpx)
+  $rem = 750 / 10px;
+  return (designpx / $rem )rem
+```
+
+然后借助 `style-resources-loader` 插件来导入此文件：
+
+1. `npm i style-resources-loader` 安装插件
+2. 在项目根目录下新建 `vue.config.js` 文件，添加下面代码：
+
+  ```js
+  const path = require('path')
+
+  module.exports = {
+    chainWebpack: config => {
+      const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+      types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)))
+    }
+  }
+
+  function addStyleResource(rule) {
+    rule.use('style-resource')
+      .loader('style-resources-loader')
+      .options({
+        patterns: [
+          path.resolve(__dirname, './public/css/common.styl')
+        ]
+      })
+  }
+  ```
+  3. 在 `src/views/Index.vue` 中使用：
+  ```css
+  header
+    width px2rem(750px) /*填入750设计稿下对应元素px值即可*/
+    height px2rem(100px)
+    background-color pink
+  ```
+
+通过上面几个步骤，我们就完成了移动端适配的rem方案。

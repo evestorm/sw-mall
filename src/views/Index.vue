@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <h1>{{msg}}</h1>
-    <header></header>
+    <header class="border1px"></header>
   </div>
 </template>
 
@@ -18,7 +18,10 @@ export default {
 
 <style lang="stylus" scoped>
 header
-  width px2rem(750px)
-  height px2rem(100px)
-  background-color pink
+  width px2rem(750)
+  height px2rem(100)
+  border1px(black)
+  // border-bottom 1px solid black
+  // height 1px
+  background-color transparentify
 </style>

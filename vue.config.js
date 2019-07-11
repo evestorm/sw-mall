@@ -12,7 +12,7 @@ function addStyleResource(rule) {
     .loader('style-resources-loader')
     .options({
       patterns: [
-        path.resolve(__dirname, './public/css/common.styl')
+        path.resolve(__dirname, './src/common/stylus/index.styl')
       ]
     })
 }

@@ -1,0 +1,17 @@
+/* 把px转为rem */
+px2rem(designpx)
+  $rem = 750 / 10;
+  return (designpx / $rem)rem
+
+/* 给需要1px下边框的元素添加一个伪元素，
+使其宽100%；高为用户自定义 */
+border1px($color)
+  position: relative
+  &:after
+    display: block
+    position: absolute
+    left: 0
+    bottom: 0
+    width: 100%
+    border-top: 1px solid $color
+    content: ' '

@@ -65,7 +65,7 @@ d config files
 
 ### 移除不需要的内容
 
-1. 移除 `src/assets/` 下的 `logo.png`
+1. 移除 `src/assets/` 整个文件夹
 2. 移除 `src/components/` 下的 `HelloWorld.vue`
 3. 移除 `src/views/` 下的 `Home.vue` 以及 `About.vue`
 4. 删除 `src/router.js` 中和 `Home.vue` 以及 `About.vue` 有关的代码
@@ -134,7 +134,21 @@ d config files
     color: black;
   }
   ```
+
   然后在 `public/index.html` 中引入：`<link rel="stylesheet" href="css/reset.css">`
+
+5.在 `src` 目录下新建一个 `common` 文件夹，今后整个项目通用的资源都会放在这儿管理，比如公共js，公共css等。然后在里面新建 `base.styl` 文件，添加一段解决浮动带来的父元素高度为0问题的代码：
+
+  ```css
+  .clearfix
+    display: inline-block
+    &:after
+      content: ""
+      clear: both
+      height: 0
+      line-height: 0
+      visibility: hidden
+  ```
 
 现在打开浏览器访问 `http://localhost:8080/` ，它应该能正常工作并显示「Hello Element」字样。
 
@@ -147,7 +161,7 @@ p.s. 不了解 rem 布局的，可以先阅读[这篇文章](https://segmentfaul
 首先更改 `public/index.html` 中的 viewport：
 
 ```html
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 ```
 
 然后通过代码来控制 rem 的基准值（仍然在 index.html 中增加）：
@@ -196,15 +210,23 @@ header
 
 然而我们程序员都是“偷懒”，上面的计算一次还好，但整个项目可不止一个元素需要换算，每一个都用上述公式计算可会累死。所以我们接下来会借助 stylus 预处理器定义一个全局方法，每次设置值的时候调用它，让它返回给我们根据公式计算出的对应px的rem值。
 
-我们来到 `public/css` 目录，新建一个 `common.styl` 文件，在里面定义转化rem值的方法：
+接着在 `src/common/stylus` 文件夹下新建一个 `minix.styl` 文件，在里面定义转化 rem 值的方法：
 
 ```js
+/* 把px转为rem */
 px2rem(designpx)
-  $rem = 750 / 10px;
+  $rem = 750 / 10;
   return (designpx / $rem )rem
 ```
 
-然后借助 `style-resources-loader` 插件来导入此文件：
+然后借助 `style-resources-loader` 插件来导入此文件，在导入之前我们会发现 `stylus` 文件夹下有两个文件了，我们希望能一次性对这两个文件都进行导入，所以我们再新建一个 `index.styl` 文件，用它来整合所有 stylus 文件：
+
+```css
+@import './mixin.styl'
+@import './base.styl'
+```
+
+然后一次性导入：
 
 1. `npm i style-resources-loader` 安装插件
 2. 在项目根目录下新建 `vue.config.js` 文件，添加下面代码：
@@ -224,17 +246,84 @@ px2rem(designpx)
       .loader('style-resources-loader')
       .options({
         patterns: [
-          path.resolve(__dirname, './public/css/common.styl')
+          path.resolve(__dirname, './src/common/stylus/index.styl')
         ]
       })
   }
   ```
-  3. 在 `src/views/Index.vue` 中使用：
-  ```css
-  header
-    width px2rem(750px) /*填入750设计稿下对应元素px值即可*/
-    height px2rem(100px)
-    background-color pink
-  ```
+
+3. 在 `src/views/Index.vue` 中使用：
+
+```css
+header
+  width px2rem(750) /*填入750设计稿下对应元素px值即可*/
+  height px2rem(100)
+  background-color pink
+```
 
 通过上面几个步骤，我们就完成了移动端适配的rem方案。
+
+### 1物理像素边框问题
+
+一般我们给元素设置1px的高在chrome调试下是没有问题的，然而在真实设备下，由于高分屏的原因，导致1px在dpr为2的设备上（e.g. iPhone 6）占据2个物理像素，在dpr为3的设备上（e.g. iPhone 6 Plus）占据3个物理像素。这就会导致真机上1px有可能“很粗”。为了解决这个问题，我们需要利用媒体查询的方法让1px根据设备dpr等比缩小。
+
+首先来到 `src/common/stylus/base.styl` 文件，我们添加媒体查询：
+
+```css
+...
+/* 给 dpr 1.5 的设备设置 0.7 的缩放 */
+@media (-webkit-min-device-pixel-ratio: 1.5), (min-device-pixel-ratio: 1.5)
+  .border1px
+    &::after
+      -webkit-transform: scaleY(.7)
+      transform: scaleY(.7)
+/* 给 dpr 2.0 的设备设置 0.5 的缩放 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2)
+  .border1px
+    &::after
+      -webkit-transform: scaleY(.5)
+      transform: scaleY(.5)
+```
+
+接着来到同级目录下的 `mixin.styl` 文件，利用伪元素的方案给需要1像素高边框的元素添加边框：
+
+```css
+/* 给需要1px下边框的元素添加一个伪元素，
+使其宽100%；高为用户自定义 */
+border1px($color)
+  position: relative
+  &:after
+    display: block
+    position: absolute
+    left: 0
+    bottom: 0
+    width: 100%
+    border-top: 1px solid $color
+    content: ' '
+```
+
+使用方法：在 `src/views/Index.vue` 页面下跟着步骤来：
+
+```html
+<template>
+  <div class="index">
+    <h1>{{msg}}</h1>
+    <!-- 1. 给需要添加1像素边框的元素设置一个类作为标识，让媒体查询能够识别 -->
+    <header class="border1px"></header>
+  </div>
+</template>
+
+<script>
+...
+</script>
+
+<style lang="stylus" scoped>
+header
+  width px2rem(750)
+  height px2rem(100)
+  border1px(black) /* 2. 通过border1px设置边框 */
+  background-color transparentify
+</style>
+```
+
+完成~

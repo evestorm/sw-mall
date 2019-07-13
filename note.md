@@ -267,25 +267,7 @@ header
 
 一般我们给元素设置1px的高在chrome调试下是没有问题的，然而在真实设备下，由于高分屏的原因，导致1px在dpr为2的设备上（e.g. iPhone 6）占据2个物理像素，在dpr为3的设备上（e.g. iPhone 6 Plus）占据3个物理像素。这就会导致真机上1px有可能“很粗”。为了解决这个问题，我们需要利用媒体查询的方法让1px根据设备dpr等比缩小。
 
-首先来到 `src/common/stylus/base.styl` 文件，我们添加媒体查询：
-
-```css
-...
-/* 给 dpr 1.5 的设备设置 0.7 的缩放 */
-@media (-webkit-min-device-pixel-ratio: 1.5), (min-device-pixel-ratio: 1.5)
-  .border1px
-    &::after
-      -webkit-transform: scaleY(.7)
-      transform: scaleY(.7)
-/* 给 dpr 2.0 的设备设置 0.5 的缩放 */
-@media (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2)
-  .border1px
-    &::after
-      -webkit-transform: scaleY(.5)
-      transform: scaleY(.5)
-```
-
-接着来到同级目录下的 `mixin.styl` 文件，利用伪元素的方案给需要1像素高边框的元素添加边框：
+来到 `src/common/stylus/mixin.styl` 文件，利用伪元素和媒体查询的组合方案给需要1像素高边框的元素添加边框：
 
 ```css
 /* 给需要1px下边框的元素添加一个伪元素，
@@ -300,6 +282,14 @@ border1px($color)
     width: 100%
     border-top: 1px solid $color
     content: ' '
+    /* 给 dpr 1.5 的设备设置 0.7 的缩放 */
+    @media (-webkit-min-device-pixel-ratio: 1.5), (min-device-pixel-ratio: 1.5)
+      -webkit-transform: scaleY(.7)
+      transform: scaleY(.7)
+    /* 给 dpr 2.0 的设备设置 0.5 的缩放 */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2)
+      -webkit-transform: scaleY(.5)
+      transform: scaleY(.5)
 ```
 
 使用方法：在 `src/views/Index.vue` 页面下跟着步骤来：

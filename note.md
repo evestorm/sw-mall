@@ -235,6 +235,8 @@ px2rem(designpx)
   const path = require('path')
 
   module.exports = {
+    publicPath: '/',
+    outputDir: 'dist',
     chainWebpack: config => {
       const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
       types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)))
@@ -316,4 +318,111 @@ header
 </style>
 ```
 
+### 路径别名
+
+在vue的开发中，会经常引用 `src/views` 和 `src/components` 文件夹下的文件，此时无论使用 `@/` 还是 `../` 相对路径的方式都有点麻烦，所以为了省点代码，我们给这些常用路径起个别名，以后可以直接通过 `components/...` 的方式引用组件。我们来到 `vue.config.js` 配置文件，添加如下代码：
+
+```js
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
+
+module.exports = {
+  ...
+  chainWebpack: config => {
+    ...
+
+    config.resolve.alias
+      .set('components', resolve('src/components'))
+      .set('views', resolve('src/views'))
+      .set('common', resolve('src/common'))
+  }
+}
+```
+
+### 安装 Vant 组件库
+
+```shell
+npm i vant
+npm i babel-plugin-import -D # 按需引入需要用到的插件
+```
+
+配置 `babel.config.js` ，引入vant的「组件库」和「样式」：
+
+```js
+plugins: [
+  [
+    'import', {
+      libraryName: 'vant',
+      style: true
+    }
+  ]
+]
+```
+
+参考：[Vant快速上手 - 引入组件](https://youzan.github.io/vant/#/zh-CN/quickstart)
+
+在 `main.js` 下引用：
+
+```js
+import { Button } from 'vant'
+Vue.use(Button)
+```
+
+页面中测试效果：
+
+```js
+<van-button type="info">信息按钮</van-button>
+```
+
+最后引入 Col 和 Row 来布局行和列。vant 默认宽分为 24 份
+
+```js
+import { Button, Row, Col } from 'vant'
+Vue.use(Button).use(Row).use(Col)
+```
+
+用法：
+
+```js
+<van-row><van-col span="24">span:24</van-col></van-row>
+```
+
 完成~
+
+## 首页搭建
+
+来到 `src/router.js` 先配置一波路由：
+
+```js
+import Vue from 'vue'
+import Router from 'vue-router'
+
+Vue.use(Router)
+
+// 路由懒加载
+function loadView(view) {
+  return () => import(`views/${view}`)
+}
+
+const router = new Router({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes: [
+    { path: '/', redirect: '/main' },
+    { path: '/main',
+      component: loadView('Main'),
+      children: [
+        { path: '/', name: 'ShoppingMall', component: loadView('ShoppingMall') }
+      ]
+    }
+  ]
+})
+
+export default router
+```
+
+根据上面的路由结构我们创建相应文件：
+
+- `src/views/Main.vue` 此文件是 `Index.vue` 换的马甲
+- `src/views/ShoppingMall.vue`

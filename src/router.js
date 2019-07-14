@@ -1,15 +1,24 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Index from './views/Index.vue'
-
 Vue.use(Router)
 
-export default new Router({
+function loadView(view) {
+  return () => import(`views/${view}`)
+}
+
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', redirect: '/index' },
-    { path: '/index', name: 'index', component: Index }
+    { path: '/', redirect: '/main' },
+    { path: '/main',
+      component: loadView('Main'),
+      children: [
+        { path: '/', name: 'ShoppingMall', component: loadView('ShoppingMall') }
+      ]
+    }
   ]
 })
+
+export default router

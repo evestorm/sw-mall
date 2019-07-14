@@ -362,24 +362,26 @@ plugins: [
 
 参考：[Vant快速上手 - 引入组件](https://youzan.github.io/vant/#/zh-CN/quickstart)
 
-在 `main.js` 下引用：
+在 `main.js` 下引用本项目所需所有组件：
 
 ```js
-import { Button } from 'vant'
-Vue.use(Button)
+import { Button, Search, Row, Col, Swipe, SwipeItem, Lazyload, List, Field, NavBar, Tab, Tabs, PullRefresh, Stepper, Tabbar, TabbarItem, Cell, CellGroup, GoodsAction, GoodsActionButton } from 'vant'
+Vue.use(Button).use(Search)
+  .use(Row).use(Col)
+  .use(Swipe).use(SwipeItem).use(Lazyload)
+  .use(List).use(Field).use(NavBar)
+  .use(Tab).use(Tabs)
+  .use(PullRefresh)
+  .use(Stepper)
+  .use(Tabbar).use(TabbarItem)
+  .use(Cell).use(CellGroup)
+  .use(GoodsAction).use(GoodsActionButton)
 ```
 
 页面中测试效果：
 
 ```js
 <van-button type="info">信息按钮</van-button>
-```
-
-最后引入 Col 和 Row 来布局行和列。vant 默认宽分为 24 份
-
-```js
-import { Button, Row, Col } from 'vant'
-Vue.use(Button).use(Row).use(Col)
 ```
 
 用法：
@@ -390,7 +392,7 @@ Vue.use(Button).use(Row).use(Col)
 
 完成~
 
-## 首页搭建
+## 底部标签栏搭建
 
 来到 `src/router.js` 先配置一波路由：
 
@@ -400,7 +402,6 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-// 路由懒加载
 function loadView(view) {
   return () => import(`views/${view}`)
 }
@@ -413,9 +414,16 @@ const router = new Router({
     { path: '/main',
       component: loadView('Main'),
       children: [
-        { path: '/', name: 'ShoppingMall', component: loadView('ShoppingMall') }
+        { path: '/', name: 'ShoppingMall', component: loadView('ShoppingMall') },
+        { path: '/categoryList', name: 'CategoryList', component: loadView('CategoryList') },
+        { path: '/cart', name: 'Cart', component: loadView('Cart') },
+        { path: '/member', name: 'Member', component: loadView('Member') }
       ]
-    }
+    },
+    { path: '/register', name: 'Register', component: loadView('Register') },
+    { path: '/login', name: 'Login', component: loadView('Login') },
+    { path: '/goods/:goodsId', name: 'Goods', component: loadView('Goods') },
+    { path: '/searchMain', name: 'SearchMain', component: loadView('SearchMain') }
   ]
 })
 
@@ -424,5 +432,54 @@ export default router
 
 根据上面的路由结构我们创建相应文件：
 
-- `src/views/Main.vue` 此文件是 `Index.vue` 换的马甲
-- `src/views/ShoppingMall.vue`
+`src/views/`
+  - `Main.vue` 此文件由 `Index.vue` 改名而来，用来充当底部标签对应页面的父容器
+  - `ShoppingMall.vue` 首页
+  - `CategoryList.vue` 商品分类页
+  - `Goods.vue` 商品详情页
+  - `Member.vue` 个人中心页
+  - `Cart.vue` 购物车页面
+  - `Register.vue` 注册页
+  - `Login.vue` 登录页
+
+这些文件除了 Main.vue ，创建出来后添加如下模板代码方便等会查看基本效果：
+
+```js
+<template>
+  <div class="category">
+    <h1>分类页</h1>
+  </div>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style lang="stylus" scoped>
+
+</style>
+```
+
+然后回到 `src/views/Main.vue` 中编写页面结构：
+
+```html
+<template>
+  <div class="main">
+    <div class="main-div">
+      <router-view></router-view>
+    </div>
+    <van-tabbar v-model="active" @change="changeTabbar(active)">
+      <van-tabbar-item icon="shop">首页</van-tabbar-item>
+      <van-tabbar-item icon="records">列表</van-tabbar-item>
+      <van-tabbar-item icon="cart">购物车</van-tabbar-item>
+      <van-tabbar-item icon="contact">会员中心</van-tabbar-item>
+    </van-tabbar>
+  </div>
+</template>
+```
+
+具体业务代码在该文件中查看。
+
+让我们回到浏览器，现在底部就会出现标签栏，点击后能够跳转到对应页面。

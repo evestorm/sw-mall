@@ -5,8 +5,8 @@ module.exports = {
   plugins: [
     [
       'import', {
-        libraryName: 'vant',
-        style: true
+        'libraryName': 'vant',
+        'style': true
       }
     ]
   ]

@@ -15,9 +15,16 @@ const router = new Router({
     { path: '/main',
       component: loadView('Main'),
       children: [
-        { path: '/', name: 'ShoppingMall', component: loadView('ShoppingMall') }
+        { path: '/', name: 'ShoppingMall', component: loadView('ShoppingMall') },
+        { path: '/categoryList', name: 'CategoryList', component: loadView('CategoryList') },
+        { path: '/cart', name: 'Cart', component: loadView('Cart') },
+        { path: '/member', name: 'Member', component: loadView('Member') }
       ]
-    }
+    },
+    { path: '/register', name: 'Register', component: loadView('Register') },
+    { path: '/login', name: 'Login', component: loadView('Login') },
+    { path: '/goods/:goodsId', name: 'Goods', component: loadView('Goods') },
+    { path: '/searchMain', name: 'SearchMain', component: loadView('SearchMain') }
   ]
 })
 

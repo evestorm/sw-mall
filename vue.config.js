@@ -7,6 +7,9 @@ function resolve(dir) {
 module.exports = {
   publicPath: '/',
   outputDir: 'dist',
+  devServer: {
+    proxy: 'http://localhost:7001'
+  },
   chainWebpack: config => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
     types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)))

@@ -133,9 +133,18 @@ d config files
     text-decoration: none;
     color: black;
   }
+
+  /* 修改vant默认search搜索框样式 */
+  .van-search__content {
+    border: 1px solid #7b7b7b !important;
+  }
+
+  img {
+    vertical-align: bottom;
+  }
   ```
 
-  然后在 `public/index.html` 中引入：`<link rel="stylesheet" href="css/reset.css">`
+  然后在 `src/main.js` 中引入：`import '../public/css/reset.css'`
 
 5.在 `src` 目录下新建一个 `common` 文件夹，今后整个项目通用的资源都会放在这儿管理，比如公共js，公共css等。然后在里面新建 `base.styl` 文件，添加一段解决浮动带来的父元素高度为0问题的代码：
 
@@ -149,6 +158,8 @@ d config files
       line-height: 0
       visibility: hidden
   ```
+
+6.在 `src/common` 文件夹下新建 `images` 文件夹，把本项目中会使用到的图片一次性导入
 
 现在打开浏览器访问 `http://localhost:8080/` ，它应该能正常工作并显示「Hello Element」字样。
 
@@ -365,7 +376,7 @@ plugins: [
 在 `main.js` 下引用本项目所需所有组件：
 
 ```js
-import { Button, Search, Row, Col, Swipe, SwipeItem, Lazyload, List, Field, NavBar, Tab, Tabs, PullRefresh, Stepper, Tabbar, TabbarItem, Cell, CellGroup, GoodsAction, GoodsActionButton } from 'vant'
+import { Button, Search, Row, Col, Swipe, SwipeItem, Lazyload, List, Field, NavBar, Tab, Tabs, PullRefresh, Stepper, Tabbar, TabbarItem, Cell, CellGroup, GoodsAction, GoodsActionButton,  Notify } from 'vant'
 Vue.use(Button).use(Search)
   .use(Row).use(Col)
   .use(Swipe).use(SwipeItem).use(Lazyload)
@@ -376,6 +387,7 @@ Vue.use(Button).use(Search)
   .use(Tabbar).use(TabbarItem)
   .use(Cell).use(CellGroup)
   .use(GoodsAction).use(GoodsActionButton)
+  .use(Notify)
 ```
 
 页面中测试效果：
@@ -390,7 +402,72 @@ Vue.use(Button).use(Search)
 <van-row><van-col span="24">span:24</van-col></van-row>
 ```
 
-完成~
+### 封装 axios
+
+首先安装两个包：
+
+```js
+npm i axios qs
+```
+
+axios 的封装在 `src/http` 文件中进行，一共四个文件：
+
+- config.js axios的默认配置
+- api.js 二次封装 axios ，包含请求和响应拦截
+- interface.js 请求接口文件
+- index.js 将 axios 封装成插件
+
+最后在 main.js 中做如下操作：
+
+```js
+import api from './http/index'
+Vue.use(api)
+```
+
+组件中使用：
+
+```js
+this.$api.list(id).then(data => console.log(data))
+```
+
+具体代码见文件夹。
+
+### 配置前端代理
+
+来到 `vue.config.js` 文件，给前端配置代理，让我们可以跨域访问后端 `localhost:7001` 下的接口：
+
+```js
+module.exports = {
+  publicPath: '/',
+  outputDir: 'dist',
+  devServer: {
+    proxy: 'http://localhost:7001'
+  },
+  ...
+}
+```
+
+### 封装 localStorage 并把分类信息保存到本地
+
+我们在请求首页数据时，不希望每次获取商品一二级分类的信息，因为这些内容不常改变，我们更希望第一次获取后把它们保存到本地，下次能够很方便的直接读取。
+
+在 `src` 目录下新建 `utils` 文件夹，创建 `storage.js` 并编写如下代码：
+
+```js
+const storage = {
+  set: (key, val) => {
+    localStorage.setItem(key, JSON.stringify(val))
+  },
+  get: key => {
+    return JSON.parse(localStorage.getItem(key) === null ? '[]' : localStorage.getItem(key))
+  },
+  remove: key => {
+    localStorage.removeItem(key)
+  }
+}
+
+export default storage
+```
 
 ## 底部标签栏搭建
 
@@ -432,7 +509,8 @@ export default router
 
 根据上面的路由结构我们创建相应文件：
 
-`src/views/`
+- `src/views/`
+
   - `Main.vue` 此文件由 `Index.vue` 改名而来，用来充当底部标签对应页面的父容器
   - `ShoppingMall.vue` 首页
   - `CategoryList.vue` 商品分类页
@@ -483,3 +561,63 @@ export default {
 具体业务代码在该文件中查看。
 
 让我们回到浏览器，现在底部就会出现标签栏，点击后能够跳转到对应页面。
+
+## 首页
+
+### 安装滑动组件 vue-awesome-swiper
+
+```shell
+npm i vue-awesome-swiper
+```
+
+在需要使用的页面按需引入，比如我们首页就需要用它来做轮播图：
+
+```js
+import 'swiper/dist/css/swiper.css'
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
+```
+
+### 优化
+
+#### 价格保留两位小数
+
+我们在 `src` 下新建 `filter` 文件夹，编写 `moneyFilter.js` 文件：
+
+```js
+export function toMoney(money = 0) {
+  return money.toFixed(2)
+}
+```
+
+然后在 `src/main.js` 中全局引入：
+
+```js
+Vue.filter('moneyFilter', function (val) {
+  return toMoney(val)
+})
+```
+
+#### 商品标题过长显示省略号/时间字段截取
+
+在 `src/filter` 中创建 `stringFilter.js` 文件：
+
+```js
+export function toSwString(str = '', howmany = 0) {
+  return str.length > howmany ? str.substring(0, howmany) + '...' : str
+}
+
+export function toSwTime(str = '', howmany = 10) {
+  return str.length > howmany ? str.substring(0, howmany) : str
+}
+```
+
+同样在 `src/main.js` 中引入：
+
+```js
+Vue.filter('stringFilter', function (str, howmany) {
+  return toSwString(str, howmany)
+})
+Vue.filter('timeFilter', function (str, howmany) {
+  return toSwTime(str, howmany)
+})
+```

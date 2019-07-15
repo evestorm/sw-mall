@@ -52,3 +52,12 @@ a {
   text-decoration: none;
   color: black;
 }
+
+/* 修改vant默认search搜索框样式 */
+.van-search__content {
+	border: 1px solid #7b7b7b !important;
+}
+
+img {
+	vertical-align: bottom;
+}

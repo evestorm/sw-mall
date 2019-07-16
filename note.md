@@ -424,7 +424,7 @@ import api from './http/index'
 Vue.use(api)
 ```
 
-组件中使用：
+组件中使用方法：
 
 ```js
 this.$api.list(id).then(data => console.log(data))
@@ -576,6 +576,13 @@ npm i vue-awesome-swiper
 import 'swiper/dist/css/swiper.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 ```
+
+### 请求数据
+
+首页没有什么太多的逻辑，这里列出两个必要的数据接口吧：
+
+1. 首先请求商品分类接口 `http://localhost:7001/admin/category`
+2. 获取到数据以后再请求首页数据 `http://localhost:7001/`
 
 ### 优化
 

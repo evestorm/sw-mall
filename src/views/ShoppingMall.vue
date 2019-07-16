@@ -31,7 +31,7 @@
     </div>
     <!-- adbanner area -->
     <div class="ad-area" @click="gotoAdvertes">
-      <img v-lazy="adBanner" width="100%">
+      <img v-lazy="adBanner.image" width="100%">
     </div>
     <!-- Recommend goods area -->
     <div class="recommend-area">
@@ -85,9 +85,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import subTitleComponent from 'components/subTitleComponent'
 import floorComponent from 'components/floorComponent'
 import goodsInfoComponent from 'components/goodsInfoComponent'
-import URL from '@/ServiceAPI.config.js'
 import storage from '@/utils/storage.js'
-import { Toast } from 'vant'
 
 export default {
   data() {
@@ -96,7 +94,7 @@ export default {
       locationIcon: require('../common/images/location.png'),
       bannerPicArray: [],
       category: [],
-      adBanner: '', // 广告栏
+      adBanner: {}, // 广告栏
       recommendGoods: [], // 商品推荐
       swiperOption: {
         slidesPerView: 3 // 横向滚动三个一组(一屏)
@@ -110,17 +108,17 @@ export default {
     }
   },
   created() {
-    this.requestData()
-    this.getCategoryAndSub()
+    this.getCategoryAndSub(() => {
+      this.category = storage.get('category')
+      this.requestData()
+    })
   },
   methods: {
     // 获取首页数据
     requestData() {
-      return
       this.$api.getShoppingMallInfo().then(data => {
-        let { category, advertesPicture, slides, recommend, floor1, floor2, floor3, floorName, hotGoods } = data
-        this.category = category
-        this.adBanner = advertesPicture.PICTURE_ADDRESS
+        let { adverts, slides, recommend, floor1, floor2, floor3, floorName, hotGoods } = data
+        this.adBanner = adverts.length > 0 ? adverts[0] : {}
         this.bannerPicArray = slides
         this.recommendGoods = recommend
         this.floor1 = floor1
@@ -128,11 +126,11 @@ export default {
         this.floor3 = floor3
         this.floorName = floorName
         this.hotGoods = hotGoods
-        // 将一级分类和二级分类存储到本地
-        if (storage.get('cate').length <= 0) {
-          storage.set('cate', category)
-          storage.get('cate')
-        }
+        // // 将一级分类和二级分类存储到本地
+        // if (storage.get('cate').length <= 0) {
+        //   storage.set('cate', category)
+        //   storage.get('cate')
+        // }
         this.isLoading = false
       }).catch(err => {
         console.log(err)
@@ -140,7 +138,7 @@ export default {
       })
     },
     // 一次性获取一二级商品分类
-    getCategoryAndSub() {
+    getCategoryAndSub(callback) {
       // this.$api.getCategory().then(data => console.log(data))
       // return
       let category = storage.get('category')
@@ -153,7 +151,10 @@ export default {
           // 存储 一级分类 和 二级分类 到 localStorage
           storage.set('category', category)
           storage.set('subCategory', subCategory)
+          callback && callback()
         })
+      } else {
+        callback && callback()
       }
     },
     // 前往商品列表页
@@ -170,7 +171,7 @@ export default {
     },
     // 我是广告位
     gotoAdvertes() {
-      Toast.success('我是广告位')
+      window.location.href = this.adBanner.link
     }
   },
   components: {

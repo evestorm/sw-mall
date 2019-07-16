@@ -142,6 +142,48 @@ d config files
   img {
     vertical-align: bottom;
   }
+  /* 默认还是有赞自带icon图标，一旦找不到，就用iconfont */
+  .van-icon {
+    font-family: 'vant-icon', 'iconfont' !important;
+  }
+
+  .van-icon-iconfont {
+    line-height: 20px !important;
+  }
+
+  /* 导航栏左边返回按钮颜色 */
+  .van-nav-bar__left .van-icon {
+    color: #999 !important;
+  }
+
+  /* TODO: 坑：vant滑动cell的宽度设置了貌似不起作用，还需要在这里手动设置
+    而且字体放在了span标签中，无法垂直居中对齐
+  */
+  .van-swipe-cell__right {
+    text-align: center;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    width: 65px;
+  }
+
+  .van-swipe-cell__right span {
+      font-weight: normal;
+      font-size: 20px;
+      /* width: 50px; */
+  }
+
+  .sw-margin-lr-10 {
+    margin: 0 10px;
+  }
+  .sw-margin-lr-20 {
+    margin: 0 20px;
+  }
+  .sw-margin-lr-30 {
+    margin: 0 30px;
+  }
   ```
 
   然后在 `src/main.js` 中引入：`import '../public/css/reset.css'`
@@ -160,6 +202,11 @@ d config files
   ```
 
 6.在 `src/common` 文件夹下新建 `images` 文件夹，把本项目中会使用到的图片一次性导入
+
+7.在 `public/index.html` 中的head里添加下面link，此link是加载一些icon字体的：
+  ```html
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1109003_az34gjadu3h.css">
+  ```
 
 现在打开浏览器访问 `http://localhost:8080/` ，它应该能正常工作并显示「Hello Element」字样。
 
@@ -628,3 +675,123 @@ Vue.filter('timeFilter', function (str, howmany) {
   return toSwTime(str, howmany)
 })
 ```
+
+#### 添加全局 Loading 动画
+
+在 `src/store.js` 中配置 loading 相关状态的操作：
+
+```js
+const state = {
+    LOADING: false
+}
+const mutations = {
+    showLoading(state){
+        state.LOADING = true
+    },
+    hideLoading (state) {
+        state.LOADING = false
+    }
+}
+```
+
+在 `src/components` 下创建 `loading.vue` 组件：
+
+```js
+<template>
+  <div class="loading">
+    <div class="center">
+      <van-loading type="spinner" color="#fd3041" size="24px">加载中...</van-loading>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'loading'
+}
+</script>
+
+<style scoped lang="stylus">
+.loading
+  position fixed
+  top 0
+  left 0
+  z-index 121
+  width 100%
+  height 100%
+  background rgba(0,0,0,0.3)
+  display table-cell
+  vertical-align middle
+  text-align center
+  .center
+    width 100%
+    height 1rem
+    margin 7.5rem auto
+</style>
+```
+
+在 `src/App.vue` 中使用 loading 组件：
+
+```js
+<template>
+  <div id="app">
+    <loading v-show="LOADING"></loading>
+    <router-view/>
+  </div>
+</template>
+<script>
+import { mapState } from 'vuex'
+import Loading from 'components/loading'
+export default {
+  computed: {
+    ...mapState([
+      'LOADING'
+    ])
+  },
+  components: {
+    Loading
+  }
+}
+</script>
+```
+
+最后在 axios 响应请求拦截器中使用：
+
+```js
+// request 拦截器
+instance.interceptors.request.use(config => {
+  // 1. loading 动画
+  store.commit('showLoading')
+  ...
+}, error => {
+  return Promise.reject(error)
+})
+
+// response 拦截器
+instance.interceptors.response.use(response => {
+  // 停止loading
+  store.commit('hideLoading')
+  ...
+}, error => {
+  // 停止 loading 动画
+  store.commit('hideLoading')
+  ...
+})
+```
+
+## 登录注册
+
+安装解析token的包 `jwt-decode`：
+
+```shell
+npm i jwt-decode
+```
+
+两个页面分别位于：
+
+- `src/views/Login.vue`
+- `src/views/Register.vue`
+
+登录注册的逻辑基本与「后台管理系统」的逻辑相同，不了解的可以点击[此处](https://github.com/evestorm/sw-mall-admin/blob/master/client/note.md#%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2)查看。
+
+另外还封装了一个 `isEmpty` 方法到 `src/utils/index.js` 中，该方法用来判断解析的后端返回的token是否为空。

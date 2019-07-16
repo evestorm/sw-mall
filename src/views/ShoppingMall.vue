@@ -126,11 +126,7 @@ export default {
         this.floor3 = floor3
         this.floorName = floorName
         this.hotGoods = hotGoods
-        // // 将一级分类和二级分类存储到本地
-        // if (storage.get('cate').length <= 0) {
-        //   storage.set('cate', category)
-        //   storage.get('cate')
-        // }
+
         this.isLoading = false
       }).catch(err => {
         console.log(err)

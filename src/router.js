@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import storage from '@/utils/storage'
 
 Vue.use(Router)
 
@@ -26,6 +27,15 @@ const router = new Router({
     { path: '/goods/:goodsId', name: 'Goods', component: loadView('Goods') },
     { path: '/searchMain', name: 'SearchMain', component: loadView('SearchMain') }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const isLogin = storage.get('token')
+  if (to.path === '/login') {
+    next()
+  } else {
+    Array.isArray(isLogin) ? next() : next('/login')
+  }
 })
 
 export default router

@@ -4,6 +4,7 @@ import config from './config'
 import qs from 'qs'
 import router from '@/router'
 import storage from '@/utils/storage'
+import store from '@/store'
 
 import { Toast } from 'vant'
 
@@ -23,11 +24,11 @@ export default function request(options) {
 
     // request 拦截器
     instance.interceptors.request.use(config => {
-      // TODO:1. 请求开始的时候可以结合 vuex 开启全屏 loading 动画
-      // console.log(store.state.loading)
-      // console.log('准备发送请求...')
+      // 1. loading 动画
+      store.commit('showLoading')
       // 2. 带上token
       const token = storage.get('token')
+      console.log(token)
       if (token.length > 0) {
         config.headers.Authorization = token
       }
@@ -37,7 +38,9 @@ export default function request(options) {
           config.url.endsWith('path') ||
           config.url.endsWith('mark') ||
           config.url.endsWith('patchs')
-        ) {} else {
+        ) {
+          // TODO: 处理FormData
+        } else {
           config.data = qs.stringify(config.data)
         }
       }
@@ -48,15 +51,16 @@ export default function request(options) {
 
     // response 拦截器
     instance.interceptors.response.use(response => {
-      // TODO:停止loading
-
+      // 停止loading
+      store.commit('hideLoading')
       // IE9时response.data是undefined，因此需要使用response.request.responseText(Stringify后的字符串)
       if (response.data === undefined) {
         response.data = JSON.parse(response.request.responseText)
       }
       return response
     }, error => {
-      // TODO: 停止loading
+      // 停止 loading 动画
+      store.commit('hideLoading')
       const { status } = error.response
       if (status === 401) {
         Toast.fail('token值无效，请重新登录')

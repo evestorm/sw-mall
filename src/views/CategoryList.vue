@@ -49,6 +49,7 @@
 import storage from '@/utils/storage.js'
 
 export default {
+  name: 'category',
   data() {
     return {
       category: [], // 大类类别

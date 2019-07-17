@@ -39,6 +39,7 @@ import { isEmpty } from '@/utils/index'
 import jwtDecode from 'jwt-decode'
 
 export default {
+  name: 'login',
   data() {
     return {
       leftArrow: require('../common/images/left_arrow.png'),

@@ -39,6 +39,7 @@
 import { Toast } from 'vant'
 
 export default {
+  name: 'register',
   data() {
     return {
       leftArrow: require('../common/images/left_arrow.png'),

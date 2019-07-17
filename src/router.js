@@ -31,10 +31,11 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   const isLogin = storage.get('token')
-  if (to.path === '/login' || to.path === '/register') {
-    next()
-  } else {
+  // 个人中心和购物车需要登录
+  if (to.name === 'Member' || to.name === 'Cart') {
     !Array.isArray(isLogin) ? next() : next('/login')
+  } else {
+    next()
   }
 })
 

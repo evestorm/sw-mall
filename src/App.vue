@@ -7,7 +7,18 @@
 <script>
 import { mapState } from 'vuex'
 import Loading from 'components/loading'
+import storage from '@/utils/storage'
+import jwtDecode from 'jwt-decode'
+import { isEmpty } from '@/utils/index'
+
 export default {
+  created() {
+    if (storage.get('token')) {
+      const decode = jwtDecode(storage.get('token'))
+      this.$store.dispatch('setAuthenticated', isEmpty(decode))
+      this.$store.dispatch('setUser', decode)
+    }
+  },
   computed: {
     ...mapState([
       'LOADING'

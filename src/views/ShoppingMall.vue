@@ -88,6 +88,7 @@ import goodsInfoComponent from 'components/goodsInfoComponent'
 import storage from '@/utils/storage.js'
 
 export default {
+  name: 'shoppingmall',
   data() {
     return {
       value: '',

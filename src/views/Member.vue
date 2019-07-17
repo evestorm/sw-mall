@@ -1,15 +1,143 @@
 <template>
-  <div class="category">
-    <h1>会员页</h1>
+  <div>
+    <van-row class="top">
+      <van-col span="8" class="logo">我的</van-col>
+      <van-col span="16" class="logout">
+        <div @click="logout">退出</div>
+      </van-col>
+    </van-row>
+    <div class="about-me">
+      <div class="name">
+        <div class="nickname van-ellipsis">{{user.username}}</div>
+        <span class="user-id">编号：{{prefixNumber}}</span><span class="iconfont icon-crown sw-icon"></span>
+      </div>
+      <div class="avatar">
+        <img :src="user.avatar" class="top-img" />
+      </div>
+    </div>
+    <div class="shopping-info">
+      <div class="contain">
+        <div>0</div>
+        <div>待付款</div>
+      </div>
+      <div class="contain">
+        <div>0</div>
+        <div>待发货</div>
+      </div>
+      <div class="contain">
+        <div>0</div>
+        <div>待收货</div>
+      </div>
+      <div class="contain">
+        <div><span class="iconfont icon-shopping"></span></div>
+        <div>全部订单</div>
+      </div>
+    </div>
+    <div>
+      <van-cell-group>
+        <!-- <van-cell title="会员卡" is-link /> -->
+        <van-cell title="地址管理" is-link />
+        <van-cell title="我的收藏" is-link />
+        <van-cell title="浏览记录" is-link />
+        <van-cell title="联系我们" is-link />
+      </van-cell-group>
+
+    </div>
+
   </div>
 </template>
 
 <script>
-export default {
+import storage from '@/utils/storage'
 
+export default {
+  name: 'member',
+  computed: {
+    user() {
+      return this.$store.getters.user
+    },
+    prefixNumber() {
+      return (Array(9).join('0') + this.user.id).slice(-9)
+    }
+  },
+  methods: {
+    // 登出
+    logout() {
+      // 清除token
+      storage.remove('token')
+      this.$store.dispatch('clearCurrentState')
+      // 页面跳转
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 
-<style lang="stylus" scoped>
+<style scoped lang="stylus">
+// 顶部【我的-退出】
+.top
+  height px2rem(86)
+  line-height px2rem(86)
+  padding px2rem(20) px2rem(20) 0 px2rem(20)
 
+  .logo
+    font-size px2rem(58)
+    vertical-align bottom
+
+  .logout
+    font-size px2rem(30)
+    text-align right
+    color grey
+
+// 我的信息展示
+.about-me
+  box-sizing border-box
+  height px2rem(230)
+  padding 0 px2rem(40)
+  display flex
+  justify-content space-around
+  align-items center
+  flex-wrap nowrap
+  font-size 20px
+
+  .name
+    flex 1
+
+    .nickname
+      font-size 16px
+      max-width 50%
+      vertical-align top
+      padding-bottom 5px
+
+    .user-id
+      font-weight lighter
+      font-size 12px
+
+    .sw-icon
+      margin-left 2px
+      color #ffae37
+
+  .avatar
+    flex 1
+    text-align right
+
+    .top-img
+      width 70px
+      height 70px
+      border-radius 50px
+
+// 我的订单展示
+.shopping-info
+  display flex
+  text-align center
+  font-size 12px
+  box-sizing border-box
+  padding-bottom 10px
+
+  .contain
+    flex 1
+
+    div:first-child
+      font-size 18px
+      font-weight bold
 </style>

@@ -14,8 +14,8 @@
     </van-row>
     <!-- 表单 -->
     <van-row class="panel">
-      <van-field v-model="username" label="用户名" placeholder="请输入用户名" required left-icon="iconfont icon-user" clearable
-        @click-right-icon="username=''" :error-message="usernameErrorMsg"></van-field>
+      <van-field v-model="email" label="邮箱" placeholder="请输入邮箱" required left-icon="iconfont icon-user" clearable
+        @click-right-icon="email=''" :error-message="emailErrorMsg"></van-field>
       <van-field v-model="password" type="password" label="密码" placeholder="请输入密码" required
         left-icon="iconfont icon-lock" clearable @click-right-icon="password=''" :error-message="passwordErrorMsg">
       </van-field>
@@ -42,10 +42,10 @@ export default {
   data() {
     return {
       leftArrow: require('../common/images/left_arrow.png'),
-      username: '',
+      email: '',
       password: '',
       isLoading: false, // 是否正在登录中（防止用户重复提交）
-      usernameErrorMsg: '', // username填写错误时的提示
+      emailErrorMsg: '', // email填写错误时的提示
       passwordErrorMsg: '' // password填写错误时的提示
     }
   },
@@ -60,7 +60,7 @@ export default {
     axiosloginUser() {
       this.isLoading = true
       this.$api.postLogin({
-        username: this.username,
+        email: this.email,
         password: this.password
       }).then(data => {
         // 登录成功
@@ -72,41 +72,21 @@ export default {
         this.$store.dispatch('setAuthenticated', isEmpty(decode))
         this.$store.dispatch('setUser', decode)
         // 页面跳转
-        this.$router.push('/main')
-        // console.log(res)
-        // if (res.data.code === 200 && res.data.message === true) {
-        //   // 本地存储
-        //   new Promise((resolve, reject) => {
-        //     console.log(res.data.data.userInfo)
-        //     userStorage.setUserInfo(res.data.data.userInfo)
-        //     // 由于本地存储没有回调函数，所以用一个settimeout
-        //     setTimeout(() => {
-        //       resolve()
-        //     }, 500)
-        //   }).then(() => {
-        //     Toast.success("登录成功")
-        //     this.$router.push("/")
-        //   }).catch(err => {
-        //     console.log(err)
-        //     this.isLoading = false
-        //     Toast.fail("登录状态保存失败")
-        //   })
-        // } else {
-        //   Toast.fail("登录失败，请检查用户名或密码是否填写正确")
-        //   this.isLoading = false
-        // }
+        this.$router.push('/')
+        this.isLoading = false
       }).catch(err => console.log(err))
     },
     // 表单验证
     checkForm() {
       let isOk = true
-      if (this.username.length < 5) {
-        this.usernameErrorMsg = '用户名不能小于5位'
+      const emailRER = /^\w+@\w+\.\w+(\.\w+)?$/
+      if (!this.email.match(emailRER)) {
+        this.emailErrorMsg = '邮箱格式不正确'
         isOk = false
       } else {
-        // 这个else是为了当第一次username为空时报错，
+        // 这个else是为了当第一次email为空时报错，
         // 但第二次用户填对了的时候，把错误消息重置为空
-        this.usernameErrorMsg = ''
+        this.emailErrorMsg = ''
       }
       if (this.password.length < 6) {
         this.passwordErrorMsg = '密码不能小于6位'
@@ -129,53 +109,52 @@ export default {
 <style scoped lang="stylus">
 .login
   box-sizing border-box
-  padding 0 px2rem(58.24)
+  padding 0 px2rem(58)
   height 100vh
   background-color #ff3a4ed6
 
   // 导航栏
   .nav-bar
-    height px2rem(52)
-    line-height px2rem(52)
+    height px2rem(60)
+    line-height px2rem(60)
+    margin px2rem(30) 0 0 0
 
     img
-      width px2rem(58.24)
-      vertical-align middle
+      width px2rem(60)
 
   // 标题
   .title
     color white
-    margin px2rem(60) 0
+    margin px2rem(30) 0 px2rem(80) 0
 
     h1
-      font-size px2rem(83.2)
-      font-weight lighter
+      font-size px2rem(82)
 
   .panel
     box-sizing border-box
-    padding 20px 20px 80px 20px
+    padding px2rem(60) px2rem(40) px2rem(180) px2rem(40)
     background-color #fff
     overflow hidden
-    border-radius 10px
+    border-radius px2rem(20)
     position relative
 
     .van-field
       background-color #efefef
-      margin 10px 0
+      margin px2rem(40) 0
 
     .van-field:first-of-type
-      margin 5px 0 10px 0
+      margin px2rem(10) 0 0 0
 
     .btn
       text-align center
       color #fff
-      font-size px2rem(31.2)
+      font-size px2rem(32)
 
       button
-        font-size 16px
+        font-size px2rem(32)
         font-weight lighter
-        height 40px
-        line-height 36px
+        height px2rem(80)
+        line-height px2rem(72)
         background -webkit-gradient(linear, left top, left bottom, from(#ff3a4ed6), to(#fc6663))
         background gradient(linear, left top, left bottom, from(#ff3a4ed6), to(#fc6663))
         background -prefix-linear-gradient(to top, #ff3a4ed6, #fc6663)

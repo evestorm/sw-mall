@@ -28,7 +28,6 @@ export default function request(options) {
       store.commit('showLoading')
       // 2. 带上token
       const token = storage.get('token')
-      console.log(token)
       if (token.length > 0) {
         config.headers.Authorization = token
       }
@@ -65,10 +64,13 @@ export default function request(options) {
       if (status === 401) {
         Toast.fail('token值无效，请重新登录')
         // 清除token
-        localStorage.removeItem('token')
+        storage.remove('token')
         // 页面跳转
         router.push('/login')
       } else {
+        if (error.response.data === undefined) {
+          error.response.data = JSON.parse(error.response.request.responseText)
+        }
         Toast.fail(error.response.data.message)
       }
 

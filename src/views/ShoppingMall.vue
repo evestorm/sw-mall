@@ -135,8 +135,6 @@ export default {
     },
     // 一次性获取一二级商品分类
     getCategoryAndSub(callback) {
-      // this.$api.getCategory().then(data => console.log(data))
-      // return
       let category = storage.get('category')
       let subCategory = storage.get('subCategory')
       // 如果本地没有分类则请求分类

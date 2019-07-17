@@ -719,7 +719,7 @@ export default {
   z-index 121
   width 100%
   height 100%
-  background rgba(0,0,0,0.3)
+  background transparentify
   display table-cell
   vertical-align middle
   text-align center
@@ -792,6 +792,84 @@ npm i jwt-decode
 - `src/views/Login.vue`
 - `src/views/Register.vue`
 
+### 如何自定义输入框左边图标
+
+使用iconfont字体，将自己常用的图标放入[iconfont项目](https://www.iconfont.cn/)中。使用 font class 类型
+1. 首先在 index.html 加载css样式：`<link rel="stylesheet" href="//at.alicdn.com/t/font_1109003_lvubgg6bw1e.css">`
+2. 在base.css文件中添加iconfont字体图标的解析方式：
+
+  ```css
+  /* 默认还是有赞自带icon图标，一旦找不到，就用iconfont */
+  .van-icon {
+    font-family: 'vant-icon', 'iconfont' !important;
+  }
+  /* 设置icon高度（默认的有点矮） */
+  .van-icon-iconfont {
+    line-height: 20px !important;
+  }
+  ```
+
+3. 在html中使用：
+
+  ```html
+  <!-- required：必须；clearable：有字时右边出现清除按钮 -->
+  <van-field
+      v-model="password"
+      type="password"
+      label="密码"
+      placeholder="请输入密码"
+      required
+      left-icon="iconfont icon-lock"
+      clearable
+      @click-right-icon="password=''"
+      ></van-field>
+  ```
+
 登录注册的逻辑基本与「后台管理系统」的逻辑相同，不了解的可以点击[此处](https://github.com/evestorm/sw-mall-admin/blob/master/client/note.md#%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2)查看。
 
 另外还封装了一个 `isEmpty` 方法到 `src/utils/index.js` 中，该方法用来判断解析的后端返回的token是否为空。
+
+## 商品列表页
+
+列表页请求接口：
+
+- POST `goods/list` params: { curSubCateId, page }
+
+页面路径：
+
+- `src/views/CategoryList.vue`
+
+### vant的tab标签页使用
+
+滑动切换和吸顶效果：
+```js
+// 通过swipeable属性可以开启滑动切换标签页
+// 通过sticky属性可以开启粘性布局，粘性布局下，当 Tab 滚动到顶部时会自动吸顶
+<van-tabs swipeable sticky></van-tabs>
+```
+
+### 下拉刷新
+
+```js
+// main中
+import { PullRefresh } from 'vant'
+Vue.use(PullRefresh)
+
+// 组件中
+// van-pull-refresh 控制下拉刷新
+<van-pull-refresh v-model="isRefresh" @refresh="onRefresh">
+    // van-list 控制上拉加载更多
+    <van-list v-model="loading" :finished="finished" @load="onLoad">
+        <div class="list-item" v-for="item in list" :key="item">
+            {{item}}
+        </div>
+    </van-list>
+</van-pull-refresh>
+```
+
+### 占位图片
+
+图片加载失败时，可以给img标签添加一个响应属性 `onerror` ：
+```html
+<img :src="..." width="100%" :onerror="errorImg">
+```

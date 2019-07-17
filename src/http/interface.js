@@ -15,6 +15,9 @@ const getShoppingMallInfo = () =>
 // 商品分类信息
 const getCategory = () =>
   axios({ url: 'admin/category', method: GET })
+// 获取二级分类下的商品（带分页）
+const getGoodsListByCategorySubID = (data) =>
+  axios({ url: 'goods/list', method: POST, data })
 // 商品详情
 const getGoodsDetail = () =>
   axios({ url: 'getGoodsInfo', method: GET })
@@ -33,6 +36,7 @@ export default {
   postLogin,
   getShoppingMallInfo,
   getCategory,
+  getGoodsListByCategorySubID,
   getGoodsDetail,
   getGoodsListBySearch,
   getCommentsListByGoodsId,

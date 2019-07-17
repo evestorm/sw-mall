@@ -74,7 +74,9 @@ export default {
         // 页面跳转
         this.$router.push('/')
         this.isLoading = false
-      }).catch(err => console.log(err))
+      }).catch(() => {
+        this.isLoading = false
+      })
     },
     // 表单验证
     checkForm() {

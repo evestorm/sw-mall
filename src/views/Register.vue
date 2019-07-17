@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import storage from '@/utils/storage'
 import { Toast } from 'vant'
 
 export default {

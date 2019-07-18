@@ -875,6 +875,79 @@ Vue.use(PullRefresh)
 <img :src="..." width="100%" :onerror="errorImg">
 ```
 
+## 商品详情页
+
+详情页接收商品ID去请求该商品的信息，具体代码在 `src/views/Goods.vue` 中。
+
+### 评论组件
+
+每个商品都有对应的评价，这里封装了一个评论组件，且它本身还包含有两个子组件，该评论组件的功能有「上拉加载更多」以及「对评论进行评论」。
+
+它们都在 `src/components/comment/` 文件夹下：
+
+- `commentsComponent.vue` 对外子组件
+  - `contentComponent.vue` 楼层部分
+  - `textareaComponent.vue` 编辑部分
+
+#### 如何使用
+
+在父组件中引用 `commentsComponent.vue` ，并传递商品id：
+
+```html
+<comments :goodsId="goodsId"></comments>
+```
+
+#### commentsComponent（父/对外组件）
+
+包含两个子组件：
+
+- 编辑部分 - commentTextarea
+- 楼层部分 - commentContent
+
+包含两个监听事件：
+
+- 编辑组件发出的 addSuccess 事件，用来通知楼层部分刷新
+- 评论组件发出的 notifyCommmerChanged 事件，用来通知编辑部分「评论对象」发生改变
+
+```html
+<div id="comment">
+  <!-- 编辑部分 -->
+  <comment-textarea :goodsId="goodsId" @addSuccess="refreshCommentList" ref="textarea"></comment-textarea>
+  <!-- 评论内容部分 -->
+  <commemt-content :goodsId="goodsId" ref="contentList" @changeCommender="notifyCommmerChanged"></commemt-content>
+</div>
+```
+
+#### commentTextarea（子/编辑部分）
+
+- addComment - 添加评论，成功后 $emit("addSuccess")
+- cancelComment - 取消评论，重置「评论对象」
+
+#### commentContent（子/列表部分）
+
+- getCommentsList - 获取当前商品评论列表
+- clickComment - 监听用户点击了哪个楼层进行评论，$emit("changeCommender")
+
+#### 后端
+
+##### 评论逻辑
+
+关键字段：
+
+- pid - 一级评论id
+- replyid - 被回复评论的id
+
+评论分为：
+
+- 一级评论
+
+- - 直接对商品进行评论 - pid 和 replyid 为 0
+
+- 二级评论
+
+- - 对一级评论进行回复 - pid 和 replyid 都为 一级评论id
+  - 对楼中楼进行回复 - pid 为 一级评论 id，replyid 为你回复的评论id
+
 ## 个人中心
 
 个人中心页面只搭了个架子用来展示用户信息，没有很多逻辑，代码在 `src/views/Member.vue` 中。

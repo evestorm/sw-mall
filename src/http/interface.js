@@ -28,17 +28,17 @@ const getCategory = () =>
 const getGoodsListByCategorySubID = (data) =>
   axios({ url: 'goods/list', method: POST, data })
 // 商品详情
-const getGoodsDetail = () =>
-  axios({ url: 'getGoodsInfo', method: GET })
+const getGoodsDetail = (ID) =>
+  axios({ url: `goods/detail/${ID}`, method: GET })
 // 商品搜索
 const getGoodsListBySearch = data =>
   axios({ url: 'getGoodsListBySearch', method: GET, data })
 // 通过商品ID找一级评论
-const getCommentsListByGoodsId = ID =>
-  axios({ url: `getCommentsListByGoodsId/${ID}`, method: GET })
+const getCommentsListByGoodsId = data =>
+  axios({ url: 'comments/list', method: POST, data })
 // 添加评论
 const addComment = data =>
-  axios({ url: 'addComment', method: POST, data })
+  axios({ url: 'comments/addComment', method: POST, data })
 
 export default {
   postRegister,

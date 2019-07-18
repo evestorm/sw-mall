@@ -14,7 +14,7 @@ import api from './http/index'
 Vue.use(api)
 
 // 按需引入vant
-import { Button, Search, Row, Col, Swipe, SwipeItem, Lazyload, List, Field, NavBar, Tab, Tabs, PullRefresh, Stepper, Tabbar, TabbarItem, Cell, CellGroup, GoodsAction, GoodsActionButton, Toast, Loading } from 'vant'
+import { Button, Search, Row, Col, Swipe, SwipeItem, Lazyload, List, Field, NavBar, Tab, Tabs, PullRefresh, Stepper, Tabbar, TabbarItem, Cell, CellGroup, GoodsAction, GoodsActionButton, Toast, Loading, GoodsActionIcon } from 'vant'
 Vue.use(Button).use(Search)
   .use(Row).use(Col)
   .use(Swipe).use(SwipeItem).use(Lazyload)
@@ -24,7 +24,7 @@ Vue.use(Button).use(Search)
   .use(Stepper)
   .use(Tabbar).use(TabbarItem)
   .use(Cell).use(CellGroup)
-  .use(GoodsAction).use(GoodsActionButton)
+  .use(GoodsAction).use(GoodsActionIcon).use(GoodsActionButton)
   .use(Toast)
   .use(Loading)
 

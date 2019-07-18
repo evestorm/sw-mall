@@ -24,7 +24,7 @@
     </div>
     <!-- type bar -->
     <div class="type-bar">
-      <div @click="gotoCategoryList(index, cate.mallCategoryId)" v-for="(cate, index) in category" :key="index">
+      <div @click="gotoCategoryList(index, cate.cate_id)" v-for="(cate, index) in category" :key="index">
         <img v-lazy="cate.image" width="90%">
         <span>{{cate.mallCategoryName}}</span>
       </div>

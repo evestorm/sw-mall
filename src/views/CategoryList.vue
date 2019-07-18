@@ -209,6 +209,7 @@ export default {
 
 #list-div
   overflow scroll
+  -webkit-overflow-scrolling touch
 
   .list-item
     display flex

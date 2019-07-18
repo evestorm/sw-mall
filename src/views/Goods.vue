@@ -113,7 +113,7 @@ export default {
 
 <style scoped lang="stylus">
 #sw-goods
-  margin-bottom 64px
+  padding-bottom 64px
 
 .goods-name
   font-size 16px

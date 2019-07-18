@@ -870,6 +870,29 @@ Vue.use(PullRefresh)
 ### 占位图片
 
 图片加载失败时，可以给img标签添加一个响应属性 `onerror` ：
+
 ```html
 <img :src="..." width="100%" :onerror="errorImg">
 ```
+
+## 个人中心
+
+个人中心页面只搭了个架子用来展示用户信息，没有很多逻辑，代码在 `src/views/Member.vue` 中。
+
+这里要提一句的是，此刻用户刷新页面会导致「用户个人信息数据」丢失，这个bug在写后台管理系统中提到过，忘记了的小伙伴可以点击[这里查看](https://github.com/evestorm/sw-mall-admin/blob/master/client/note.md#%E5%AD%98%E5%82%A8%E5%88%B0-vuex)，讲bug这个段落在这一小节最后部分。
+
+解决方案就是在 `src/App.vue` 根组件中对 `localStorage` 中是否存在 `token` 进行一个判断，如果有则保存到 `Vuex` 中：
+
+```js
+created() {
+  if (!Array.isArray(storage.get('token'))) {
+    const decode = jwtDecode(storage.get('token'))
+    this.$store.dispatch('setAuthenticated', isEmpty(decode))
+    this.$store.dispatch('setUser', decode)
+  }
+},
+```
+
+### 上传头像功能
+
+封装上传头像组件，该组件在 `src/components/avatar.vue` 。具体的上传头像任务交给了 avatar ，并会在头像上传成功后通知父组件「个人中心页」，父组件收到消息后会重新请求一次用户数据来更新头像信息。

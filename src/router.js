@@ -30,10 +30,11 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLogin = storage.get('token')
+  const isLogin = !Array.isArray(storage.get('token'))
+  console.log(isLogin)
   // 个人中心和购物车需要登录
   if (to.name === 'Member' || to.name === 'Cart') {
-    !Array.isArray(isLogin) ? next() : next('/login')
+    isLogin ? next() : next('/login')
   } else {
     next()
   }

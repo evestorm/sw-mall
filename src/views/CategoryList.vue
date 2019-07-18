@@ -76,7 +76,18 @@ export default {
       this.categoryIndex = index
       this.setCateAndSubCate(category, subCategory, index)
     } else {
-      this.setCateAndSubCate(category, subCategory)
+      if (category.length > 0 && subCategory > 0) {
+        this.setCateAndSubCate(category, subCategory)
+      } else {
+        this.$api.getCategory().then(data => {
+          category = data.filter(v => v.parent_id === '0')
+          subCategory = data.filter(v => v.parent_id !== '0')
+          // 存储 一级分类 和 二级分类 到 localStorage
+          storage.set('category', category)
+          storage.set('subCategory', subCategory)
+          this.setCateAndSubCate(category, subCategory)
+        })
+      }
     }
   },
   mounted() {
@@ -115,6 +126,7 @@ export default {
       this.curSubCate = this.subCategory.filter(sub => sub.parent_id === categoryId)
       this.active = 0
       this.curSubCateId = this.curSubCate[0].cate_id
+      console.log(this.curSubCate, this.curSubCateId)
       this.onRefresh()
     },
     // 上拉加载方法【会被默认触发】

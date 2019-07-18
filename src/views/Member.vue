@@ -12,7 +12,7 @@
         <span class="user-id">编号：{{prefixNumber}}</span><span class="iconfont icon-crown sw-icon"></span>
       </div>
       <div class="avatar">
-        <img :src="user.avatar" class="top-img" />
+        <avatar v-if="user.avatar" class="top-img" v-model="uploadImage" @upload="upload" :cube="{width: 70, height: 70, backgroundImage: user.avatar}"></avatar>
       </div>
     </div>
     <div class="shopping-info">
@@ -48,19 +48,44 @@
 </template>
 
 <script>
+import Avatar from 'components/avatar.vue'
 import storage from '@/utils/storage'
 
 export default {
   name: 'member',
+  data() {
+    return {
+      user: {}, // 用户信息
+      uploadImage: ''
+    }
+  },
+  mounted() {
+    this.$api.getUserInfo().then(data => {
+      this.user = data
+    })
+  },
+  components: {
+    Avatar
+  },
   computed: {
-    user() {
-      return this.$store.getters.user
-    },
     prefixNumber() {
       return (Array(9).join('0') + this.user.id).slice(-9)
     }
   },
   methods: {
+    // 上传
+    upload(data) {
+      const user = this.user
+      this.$api.updateUserInfo({
+        avatar: data,
+        email: user.email,
+        username: user.username,
+        id: user.id
+      }).then(() => {
+        this.user.avatar = data
+        this.$toast.success('更新头像成功!')
+      })
+    },
     // 登出
     logout() {
       // 清除token
@@ -118,8 +143,10 @@ export default {
       color #ffae37
 
   .avatar
-    flex 1
+    flex-basis 70px
     text-align right
+    display flex
+    margin-left auto
 
     .top-img
       width 70px

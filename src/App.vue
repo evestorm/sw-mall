@@ -13,7 +13,9 @@ import { isEmpty } from '@/utils/index'
 
 export default {
   created() {
-    if (storage.get('token')) {
+    const isLogin = !Array.isArray(storage.get('token'))
+    console.log(isLogin)
+    if (isLogin) {
       const decode = jwtDecode(storage.get('token'))
       this.$store.dispatch('setAuthenticated', isEmpty(decode))
       this.$store.dispatch('setUser', decode)

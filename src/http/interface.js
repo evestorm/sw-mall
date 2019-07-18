@@ -32,7 +32,7 @@ const getGoodsDetail = (ID) =>
   axios({ url: `goods/detail/${ID}`, method: GET })
 // 商品搜索
 const getGoodsListBySearch = data =>
-  axios({ url: 'getGoodsListBySearch', method: GET, data })
+  axios({ url: 'search', method: POST, data })
 // 通过商品ID找一级评论
 const getCommentsListByGoodsId = data =>
   axios({ url: 'comments/list', method: POST, data })

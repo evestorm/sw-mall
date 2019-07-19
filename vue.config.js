@@ -8,8 +8,7 @@ module.exports = {
   publicPath: '/',
   outputDir: 'dist',
   devServer: {
-    // proxy: 'http://192.168.31.252:7001' ← 电脑上调试
-    proxy: 'http://192.168.31.252:7001' // ← 手机上调试填电脑ip
+    port: 8090
   },
   chainWebpack: config => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']

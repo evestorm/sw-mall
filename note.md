@@ -479,16 +479,16 @@ this.$api.list(id).then(data => console.log(data))
 
 具体代码见文件夹。
 
-### 配置前端代理
+### 配置启动端口
 
-来到 `vue.config.js` 文件，给前端配置代理，让我们可以跨域访问后端 `localhost:7001` 下的接口：
+来到 `vue.config.js` 文件，更新端口为 8090：
 
 ```js
 module.exports = {
   publicPath: '/',
   outputDir: 'dist',
   devServer: {
-    proxy: 'http://localhost:7001'
+    port: 8090
   },
   ...
 }

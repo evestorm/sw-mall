@@ -6,29 +6,29 @@
         <img :src="leftArrow" alt="left_arrow" width="100%" @click="goBack">
       </van-col>
     </van-row>
-    <!-- 标题 -->
-    <van-row>
+    <van-row class="main">
+      <!-- 标题 -->
       <van-col span="24" class="title">
         <h1>登录</h1>
       </van-col>
-    </van-row>
-    <!-- 表单 -->
-    <van-row class="panel">
-      <van-field v-model="email" label="邮箱" placeholder="请输入邮箱" required left-icon="iconfont icon-user" clearable
-        @click-right-icon="email=''" :error-message="emailErrorMsg"></van-field>
-      <van-field v-model="password" type="password" label="密码" placeholder="请输入密码" required
-        left-icon="iconfont icon-lock" clearable @click-right-icon="password=''" :error-message="passwordErrorMsg">
-      </van-field>
-      <div class="btn">
-        <van-button class="btn" type="default" size="large" round @click="loginAction" :loading="isLoading"
-          loading-text="登录中...">立即登录</van-button>
-      </div>
-      <div class="bottom" @click="gotoRegister">
-        <div class="shadow">
-          <div class="inner"></div>
+      <!-- 表单 -->
+      <van-col class="panel">
+        <van-field v-model="email" label="邮箱" placeholder="请输入邮箱" required left-icon="iconfont icon-user" clearable
+          @click-right-icon="email=''" :error-message="emailErrorMsg"></van-field>
+        <van-field v-model="password" type="password" label="密码" placeholder="请输入密码" required
+          left-icon="iconfont icon-lock" clearable @click-right-icon="password=''" :error-message="passwordErrorMsg">
+        </van-field>
+        <div class="btn">
+          <van-button class="btn" type="default" size="large" round @click="loginAction" :loading="isLoading"
+            loading-text="登录中...">立即登录</van-button>
         </div>
-        还没有注册账号？<span>注册</span>
-      </div>
+        <div class="bottom" @click="gotoRegister">
+          <div class="shadow">
+            <div class="inner"></div>
+          </div>
+          还没有注册账号？<span>注册</span>
+        </div>
+      </van-col>
     </van-row>
   </div>
 </template>
@@ -111,81 +111,98 @@ export default {
 
 <style scoped lang="stylus">
 .login
+  position relative
   box-sizing border-box
   padding 0 px2rem(58)
-  height 100vh
+  height 100%
   background-color #ff3a4ed6
 
   // 导航栏
   .nav-bar
-    height px2rem(60)
-    line-height px2rem(60)
-    margin px2rem(30) 0 0 0
+    height 30px
+    line-height 30px
+    margin 15px 0 0 0
 
     img
-      width px2rem(60)
+      width 30px
 
-  // 标题
-  .title
-    color white
-    margin px2rem(30) 0 px2rem(80) 0
+  .main
+    position absolute
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
+    min-width 84%
+    margin auto
 
-    h1
-      font-size px2rem(82)
-
-  .panel
-    box-sizing border-box
-    padding px2rem(60) px2rem(40) px2rem(180) px2rem(40)
-    background-color #fff
-    overflow hidden
-    border-radius px2rem(20)
-    position relative
-
-    .van-field
-      background-color #efefef
-      margin px2rem(40) 0
-
-    .van-field:first-of-type
-      margin px2rem(10) 0 0 0
-
-    .btn
-      text-align center
-      color #fff
-      font-size px2rem(32)
-
-      button
-        font-size px2rem(32)
-        font-weight lighter
-        height px2rem(80)
-        line-height px2rem(72)
-        background -webkit-gradient(linear, left top, left bottom, from(#ff3a4ed6), to(#fc6663))
-        background gradient(linear, left top, left bottom, from(#ff3a4ed6), to(#fc6663))
-        background -prefix-linear-gradient(to top, #ff3a4ed6, #fc6663)
-        background linear-gradient(to top, #ff3a4ed6, #fc6663)
-        box-shadow 2px 4px 8px 0px rgba(46, 61, 73, 0.2)
-
-    .bottom
-      font-size 14px
-      color rgb(167, 167, 167)
+    // 标题
+    .title
       position absolute
       left 0
-      right 0
-      bottom 0
-      height 70px
-      text-align center
+      top -72px
+      color white
+      margin 15px 0
+
+      h1
+        font-size 42px
+      @media screen and (max-width 320px)
+        top -52px
+        h1
+          font-size 30px
+
+    .panel
+      position relative
+      width 100%
+      box-sizing border-box
+      padding 20px 20px 96px 20px
       background-color #fff
+      overflow hidden
+      border-radius 10px
 
-      .shadow
-        height 40px
+      .van-field
+        background-color #efefef
+        margin 20px 0
 
-        .inner
-          height 10px
-          box-shadow 0 5px 20px 5px #fc7e7c
-          border-bottom-left-radius 10px
-          border-bottom-right-radius 10px
+      .van-field:first-of-type
+        margin 20px 0 0 0
 
-        overflow hidden
+      .btn
+        text-align center
+        color #fff
+        font-size 16px
 
-      span
-        color #fc6663
+        button
+          font-size 16px
+          font-weight lighter
+          height 40px
+          line-height 36px
+          background -webkit-gradient(linear, left top, left bottom, from(#ff3a4ed6), to(#fc6663))
+          background gradient(linear, left top, left bottom, from(#ff3a4ed6), to(#fc6663))
+          background -prefix-linear-gradient(to top, #ff3a4ed6, #fc6663)
+          background linear-gradient(to top, #ff3a4ed6, #fc6663)
+          box-shadow 2px 4px 8px 0px rgba(46, 61, 73, 0.2)
+
+      .bottom
+        font-size 14px
+        color rgb(167, 167, 167)
+        position absolute
+        left 0
+        right 0
+        bottom 0
+        height 70px
+        text-align center
+        background-color #fff
+
+        .shadow
+          height 40px
+
+          .inner
+            height 10px
+            box-shadow 0 5px 20px 5px #fc7e7c
+            border-bottom-left-radius 10px
+            border-bottom-right-radius 10px
+
+          overflow hidden
+
+        span
+          color #fc6663
 </style>

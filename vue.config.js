@@ -18,6 +18,11 @@ module.exports = {
       .set('components', resolve('src/components'))
       .set('views', resolve('src/views'))
       .set('common', resolve('src/common'))
+  },
+  configureWebpack: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+    }
   }
 }
 

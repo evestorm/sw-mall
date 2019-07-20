@@ -980,3 +980,27 @@ created() {
 搜索页是本项目最后一个功能，文件地址：`src/views/SearchMain.vue`，该页面主要搜索关键词为「商品名称」，次要排序是「综合」「销量」「价格」「新品优先」。搜索页另外一个功能就是就是搜索结果本地存储以及清除历史记录。
 
 对应接口为：`localhost:8080/search` 。
+
+## 上线
+
+### 移除控制台打印信息
+
+上线之前我们需要移除项目中所有的 `console.log` 打印，让控制台保持“清爽”：
+
+首先安装 `npm install terser-webpack-plugin -D`
+
+然后在vue.config.js文件里写插件的配置：
+
+```js
+module.export = {
+  configureWebpack: (config)=>{
+    if(process.env.NODE_ENV === 'production'){
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+    }
+  }
+}
+```
+
+### 打包
+
+在项目根目录执行 `npm run build` 后会把项目打包到 `dist` 目录下，然后把里面所有的文件上传到你的服务器上就OK了。

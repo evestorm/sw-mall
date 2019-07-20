@@ -7,6 +7,8 @@
 ### 线上地址
 
 - [手机商城App](http://mall.evelance.cn)
+- 账号：admin@qq.com
+- 密码：admin@qq.com
 
 ### 后端项目地址
 
@@ -27,9 +29,21 @@ npm install
 
 ### 启动
 
+- 登录账号：admin@qq.com
+- 登录密码：admin@qq.com
+
 ```shell
 npm run serve
 ```
+
+### 快速登录
+
+- 账号：admin@qq.com
+- 密码：admin@qq.com
+
+### 项目编写说明
+
+想要了解该项目的大致构建流程？点击[此处查看编写说明](./note_with_toc.md)
 
 ## 功能
 

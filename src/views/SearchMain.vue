@@ -25,7 +25,7 @@
           {{item.name}}<span v-if="item.icon" :class="shengjiangxu"></span>
         </div>
       </div>
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-list class="search-results" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <div class="list-item" @click="goGoodsInfo(item.ID)" v-for="(item, index) in goodsList" :key="index">
           <div class="list-item-img">
             <img :src="item.IMAGE1" width="100%" :onerror="errorImg">
@@ -207,22 +207,31 @@ export default {
 <style scoped lang="stylus">
 #search-main
   box-sizing border-box
+  padding-top 56px
   background-color #f1f1f1
-  overflow scroll
+  height 100%
+  overflow hidden
   -webkit-overflow-scrolling touch
 
 .search-bar
-  height px2rem(150)
+  position fixed
+  z-index 9999
+  top 0
+  width 100%
+  height 56px
 
 .search-history
-  overflow scroll
+  height 100%
+  overflow-y scroll
+  --webkit-overflow-scrolling touch
+  // margin-top 56px
   font-size 14px
   padding 0 10px
 
   .title
     font-size 14px
     font-weight bold
-    margin 5px 0
+    margin 10px 0
 
     span
       float right
@@ -231,7 +240,7 @@ export default {
   ul
     li
       padding 0 20px
-      height px2rem(60)
+      height 40px
       display flex
 
       span:first-of-type
@@ -244,15 +253,17 @@ export default {
         color gray
 
 .search-list
-
-  // overflow: scroll;
+  position relative
+  box-sizing border-box
+  height 100%
+  overflow hidden
   .search-condition
     width 100%
     display flex
     font-size 12px
     border-bottom 1px solid #f1f1f1
     background-color #fff
-    padding-bottom 5px
+    padding 10px 0
 
     div
       text-align center
@@ -264,27 +275,40 @@ export default {
     div.active
       color #ff3a4f
 
+  .search-results
+    position absolute
+    top 33px
+    bottom 0
+    width 100%
+    overflow scroll
+    --webkit-overflow-scrolling touch
+
   .list-item
+    box-sizing border-size
     display flex
     font-size px2rem(32)
-    padding 5px
+    padding 10px
     text-align center
     font-size 14px
     border-bottom 1px solid #f0f0f0
     background-color #fff
 
     .list-item-img
-      min-height px2rem(168)
-      line-height px2rem(166)
+      min-height 84px
+      line-height 84px
+      padding 10px
       flex 1
+      display flex
+      justify-content flex-start
 
       img
+        max-width 120px
         vertical-align middle
 
     .list-item-text
-      text-align left
+      text-align right
       flex 2
-      margin 10px
+      padding 10px
       display flex
       flex-direction column
       justify-content space-between

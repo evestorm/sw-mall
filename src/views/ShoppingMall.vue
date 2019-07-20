@@ -3,7 +3,7 @@
     <!-- 顶部【LOGO+定位+searchbar】 -->
     <div class="search-bar">
       <van-row class="top">
-        <van-col span="12" class="logo">首页</van-col>
+        <van-col span="12" class="logo"><h1>首页</h1></van-col>
         <van-col span="12" class="location">
           <img :src="locationIcon" alt="location" width="100%">
         </van-col>
@@ -182,22 +182,27 @@ export default {
 <style lang="stylus">
 // 顶栏
 .search-bar
-  height px2rem(200)
+  height 100px
   background-color #fff
   .top
-    height px2rem(80)
-    line-height px2rem(80)
-    padding px2rem(20) 10px 0 10px
+    display flex
+    height 40px
+    line-height 40px
+    padding 10px 10px 0 10px
 
     .logo
-      font-size px2rem(58)
-      vertical-align bottom
+      font-size 30px
+      h1
+        vertical-align bottom
 
     .location
+      display flex
+      justify-content flex-end
+      align-items center
       text-align right
       img
-        width px2rem(46)
-        vertical-align px2rem(5.2)
+        width 24px
+        vertical-align middle
 
   .search
     .van-search

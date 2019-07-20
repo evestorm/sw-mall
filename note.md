@@ -167,6 +167,7 @@ d config files
     justify-content: center;
     color: #fff;
     width: 65px;
+    background-color: #f44
   }
 
   .van-swipe-cell__right span {

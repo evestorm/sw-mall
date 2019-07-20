@@ -10,7 +10,6 @@
     <div class="cart-list">
       <van-swipe-cell :right-width="65" :left-width="0" v-for="(item, index) in cartInfo" :key="index"
         :on-close="onClose(item, index)">
-        <span slot="left">选择</span>
         <van-cell-group>
           <van-card :price="item.price" :title="item.name" :thumb="item.image">
             <div slot="footer">
@@ -18,7 +17,9 @@
             </div>
           </van-card>
         </van-cell-group>
-        <span slot="right" class="iconfont icon-lajitong3"></span>
+        <template slot="right">
+          <span type="danger" class="iconfont icon-lajitong3"></span>
+        </template>
       </van-swipe-cell>
     </div>
     <!-- 显示总金额 -->
@@ -45,7 +46,7 @@ export default {
   mounted() {
     let winHeight = document.documentElement.clientHeight || document.body.clientHeight
     let cart = document.querySelector('.cart')
-    cart.style.height = winHeight + 10 + 'px'
+    cart.style.height = winHeight + 'px'
   },
   methods: {
     getCartInfo() {
@@ -53,7 +54,6 @@ export default {
       if (localStorage.cartInfo) {
         this.cartInfo = storage.get('cartInfo')
       }
-      console.log('this.cartInfo:' + JSON.stringify(this.cartInfo))
       this.isEmpty = this.cartInfo.length > 0
     },
     clearCart() {
@@ -104,32 +104,50 @@ export default {
 
 <style scoped lang="stylus">
 .cart
+  position relative
+  box-sizing border-box
   background-color #f1f1f1
-  height 100vh
-  overflow-y scroll
+  padding (46+48)px 0 (33+50)px 0
+  height 100%
+  overflow hidden
+
+.navbar-div
+  position fixed
+  top 0
+  left 0
+  width 100%
+  height 46px
 
 .cart-title
+  position fixed
+  box-sizing border-box
+  display flex
+  justify-content flex-end
+  align-items center
+  top 46px
+  left 0
+  width 100%
   height 48px
   line-height 48px
   background-color #fff
   border-bottom 1px solid #e4e7ed
   padding 5px
-  text-align right
   font-size 20px
 
 // 购物车列表
 .cart-list
   // 防止子容器垂直方向上的margin合并
   padding 1px 10px
-  // width: 100%;
-  // box-sizing: border-box;
-  margin-bottom 80px
+  padding-bottom 50px
+  height 100%
+  overflow-y scroll
+  -webkit-overflow-scrolling touch
 
 .van-swipe-cell:first-of-type
   margin-top 10px
 
 .van-swipe-cell
-  background-color red
+  // background-color red
   margin-bottom 10px
 
   .van-card
@@ -137,7 +155,7 @@ export default {
 
 // 合计
 .total-money
-  // margin-bottom: 50px;
+  position fixed
   position fixed
   bottom 50px
   left 0

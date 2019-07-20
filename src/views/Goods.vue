@@ -56,7 +56,6 @@ export default {
   methods: {
     getInfo() {
       this.$api.getGoodsDetail(this.goodsId).then(data => {
-        console.log(data)
         this.goodsInfo = data.result
       }).catch(err => {
         console.log(err)
@@ -113,7 +112,7 @@ export default {
 
 <style scoped lang="stylus">
 #sw-goods
-  padding-bottom 64px
+  padding-bottom 50px
 
 .goods-name
   font-size 16px
@@ -131,4 +130,5 @@ export default {
   position fixed
   bottom 0
   left 0
+  z-index 999
 </style>

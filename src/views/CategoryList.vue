@@ -92,6 +92,7 @@ export default {
   },
   mounted() {
     console.log('mounted')
+
     let winHeight = document.documentElement.clientHeight || document.body.clientHeight
     document.getElementById('left-nav').style.height = winHeight - 46 - 50 + 'px'
     document.getElementById('list-div').style.height = winHeight - 90 - 50 + 'px'
@@ -198,12 +199,15 @@ export default {
 
 <style scoped lang="stylus">
 #left-nav
-  background aliceblue
+  background #f9f9f9
+  height 100%
+  overflow-y scroll
+  --webkit-overflow-scrolling touch
 
   ul li
-    line-height px2rem(78)
+    line-height 40px
     border-bottom 1px solid #e1e1e1
-    padding px2rem(6)
+    padding 3px
     font-size 16px
     text-align: center
 
@@ -213,15 +217,15 @@ export default {
 
   .list-item
     display flex
-    padding px2rem(10)
+    padding 5px
     text-align center
     font-size 14px
     border-bottom 1px solid #f0f0f0
     background-color #fff
 
     .list-item-img
-      min-height px2rem(168)
-      line-height px2rem(166)
+      min-height 84px
+      line-height 84px
       flex 1
 
       img

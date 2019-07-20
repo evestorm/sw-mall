@@ -14,9 +14,9 @@
       <!-- 表单 -->
       <van-col class="panel">
         <van-field v-model="email" label="邮箱" placeholder="请输入邮箱" required left-icon="iconfont icon-user" clearable
-          @click-right-icon="email=''" :error-message="emailErrorMsg"></van-field>
+          @click-right-icon="email=''" :error-message="emailErrorMsg" label-width="60"></van-field>
         <van-field v-model="password" type="password" label="密码" placeholder="请输入密码" required
-          left-icon="iconfont icon-lock" clearable @click-right-icon="password=''" :error-message="passwordErrorMsg">
+          left-icon="iconfont icon-lock" clearable @click-right-icon="password=''" :error-message="passwordErrorMsg" label-width="60">
         </van-field>
         <div class="btn">
           <van-button class="btn" type="default" size="large" round @click="loginAction" :loading="isLoading"

@@ -101,24 +101,24 @@ export default {
 <style scoped lang="stylus">
 // 顶部【我的-退出】
 .top
-  height px2rem(86)
-  line-height px2rem(86)
-  padding px2rem(20) px2rem(20) 0 px2rem(20)
+  height 44px
+  line-height 44px
+  padding 10px 10px 0 10px
 
   .logo
-    font-size px2rem(58)
+    font-size 30px
     vertical-align bottom
 
   .logout
-    font-size px2rem(30)
+    font-size 16px
     text-align right
     color grey
 
 // 我的信息展示
 .about-me
   box-sizing border-box
-  height px2rem(230)
-  padding 0 px2rem(40)
+  height 116px
+  padding 0 20px
   display flex
   justify-content space-around
   align-items center

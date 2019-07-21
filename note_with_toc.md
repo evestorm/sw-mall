@@ -34,11 +34,14 @@
 				- [ 评论逻辑](#head34)
 	- [ 购物车](#head35)
 	- [ 个人中心](#head36)
-		- [ 上传头像功能](#head37)
-	- [ 搜索页](#head38)
-	- [ 上线](#head39)
-		- [ 移除控制台打印信息](#head40)
-		- [ 打包](#head41)
+		- [ 路由守卫](#head37)
+		- [ 刷新页面bug](#head38)
+		- [ 上传头像功能](#head39)
+	- [ 搜索页](#head40)
+	- [ keep-alive](#head41)
+	- [ 上线](#head42)
+		- [ 移除控制台打印信息](#head43)
+		- [ 打包](#head44)
 # <span id="head1"> 项目编写步骤</span>
 
 ## <span id="head2"> 准备工作</span>
@@ -998,6 +1001,25 @@ Vue.use(PullRefresh)
 
 个人中心页面只搭了个架子用来展示用户信息，没有很多逻辑，代码在 `src/views/Member.vue` 中。
 
+### <span id="head37"> 路由守卫</span>
+
+由于个人中心页面需要用户登录，所以我们需要在用户点击此页面时跳转到登录页，这个需求可以利用路由守卫实现，我们来到 `src/router.js`，改造下代码：
+
+```js
+router.beforeEach((to, from, next) => {
+const isLogin = !Array.isArray(storage.get('token'))
+console.log(isLogin)
+// 个人中心需要登录
+if (to.name === 'Member') {
+isLogin ? next() : next('/login')
+} else {
+next()
+}
+})
+```
+
+### <span id="head38"> 刷新页面bug</span>
+
 这里要提一句的是，此刻用户刷新页面会导致「用户个人信息数据」丢失，这个bug在写后台管理系统中提到过，忘记了的小伙伴可以点击[这里查看](https://github.com/evestorm/sw-mall-admin/blob/master/client/note.md#%E5%AD%98%E5%82%A8%E5%88%B0-vuex)，讲bug这个段落在这一小节最后部分。
 
 解决方案就是在 `src/App.vue` 根组件中对 `localStorage` 中是否存在 `token` 进行一个判断，如果有则保存到 `Vuex` 中：
@@ -1012,19 +1034,37 @@ this.$store.dispatch('setUser', decode)
 },
 ```
 
-### <span id="head37"> 上传头像功能</span>
+### <span id="head39"> 上传头像功能</span>
 
 封装上传头像组件，该组件在 `src/components/avatar.vue` 。具体的上传头像任务交给了 avatar ，并会在头像上传成功后通知父组件「个人中心页」，父组件收到消息后会重新请求一次用户数据来更新头像信息。
 
-## <span id="head38"> 搜索页</span>
+## <span id="head40"> 搜索页</span>
 
 搜索页是本项目最后一个功能，文件地址：`src/views/SearchMain.vue`，该页面主要搜索关键词为「商品名称」，次要排序是「综合」「销量」「价格」「新品优先」。搜索页另外一个功能就是就是搜索结果本地存储以及清除历史记录。
 
 对应接口为：`localhost:8080/search` 。
 
-## <span id="head39"> 上线</span>
+## <span id="head41"> keep-alive</span>
 
-### <span id="head40"> 移除控制台打印信息</span>
+到此我们整个前端项目已经构建完毕，但目前项目有个小问题，每当切换底部导航栏时，对应的页面就会刷新并重新请求一次数据，这个开销我们可以利用Vue给我们提供的 keep-alive 解决。
+
+给底部导航栏添加 keep-alive ，这样在切换页面后，如果再切回去，就不会自动重新加载一遍了，除非下拉刷新。这样就能减缓服务器压力。
+
+> `src/views/Main.vue`
+
+```js
+<div class="main-div">
+<keep-alive>
+<router-view v-if="$route.path !== '/categoryList'"></router-view>
+</keep-alive>
+<router-view v-if="$route.path === '/categoryList'"></router-view>
+</div>
+```
+
+
+## <span id="head42"> 上线</span>
+
+### <span id="head43"> 移除控制台打印信息</span>
 
 上线之前我们需要移除项目中所有的 `console.log` 打印，让控制台保持“清爽”：
 
@@ -1042,6 +1082,6 @@ config.optimization.minimizer[0].options.terserOptions.compress.drop_console = t
 }
 ```
 
-### <span id="head41"> 打包</span>
+### <span id="head44"> 打包</span>
 
 在项目根目录执行 `npm run build` 后会把项目打包到 `dist` 目录下，然后把里面所有的文件上传到你的服务器上就OK了。

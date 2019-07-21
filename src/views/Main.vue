@@ -1,7 +1,10 @@
 <template>
   <div class="main">
     <div class="main-div">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view v-if="$route.path !== '/categoryList'"></router-view>
+      </keep-alive>
+      <router-view v-if="$route.path === '/categoryList'"></router-view>
     </div>
     <van-tabbar v-model="active" @change="changeTabbar(active)">
       <van-tabbar-item icon="shop">首页</van-tabbar-item>

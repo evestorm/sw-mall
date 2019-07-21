@@ -29,7 +29,8 @@ export default {
   methods: {
     // 提交评论【可选：顶级评论id，被回复评论id】
     addComment() {
-      if (!this.$store.getters.user || this.$store.getters.user === {}) {
+      console.log('addComment')
+      if (!this.$store.getters.user.id) {
         this.$toast.fail('请先登录哦亲~')
         return
       }

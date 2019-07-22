@@ -27,7 +27,7 @@ export default function request(options) {
       // 1. loading 动画
       store.commit('showLoading')
       // 2. 带上token
-      const token = storage.get('token')
+      const token = storage.get('fe-token')
       if (token.length > 0) {
         config.headers.Authorization = token
       }
@@ -64,7 +64,7 @@ export default function request(options) {
       if (status === 401) {
         Toast.fail('token值无效，请重新登录')
         // 清除token
-        storage.remove('token')
+        storage.remove('fe-token')
         // 页面跳转
         router.push('/login')
       } else {

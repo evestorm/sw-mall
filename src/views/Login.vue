@@ -66,7 +66,7 @@ export default {
       }).then(data => {
         // 登录成功
         const { token } = data
-        storage.set('token', token)
+        storage.set('fe-token', token)
         // 解析token
         const decode = jwtDecode(token)
         // 存储数据

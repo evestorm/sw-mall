@@ -89,7 +89,7 @@ export default {
     // 登出
     logout() {
       // 清除token
-      storage.remove('token')
+      storage.remove('fe-token')
       this.$store.dispatch('clearCurrentState')
       // 页面跳转
       this.$router.push('/login')

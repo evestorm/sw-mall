@@ -1007,7 +1007,8 @@ Vue.use(PullRefresh)
 
 ```js
 router.beforeEach((to, from, next) => {
-const isLogin = !Array.isArray(storage.get('token'))
+// localstorage中token的命名为'fe-token'，为的是和后台管理系统存储的token名作区分
+const isLogin = !Array.isArray(storage.get('fe-token'))
 console.log(isLogin)
 // 个人中心需要登录
 if (to.name === 'Member') {
@@ -1026,8 +1027,8 @@ next()
 
 ```js
 created() {
-if (!Array.isArray(storage.get('token'))) {
-const decode = jwtDecode(storage.get('token'))
+if (!Array.isArray(storage.get('fe-token'))) {
+const decode = jwtDecode(storage.get('fe-token'))
 this.$store.dispatch('setAuthenticated', isEmpty(decode))
 this.$store.dispatch('setUser', decode)
 }

@@ -30,7 +30,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLogin = !Array.isArray(storage.get('token'))
+  const isLogin = !Array.isArray(storage.get('fe-token'))
   console.log(isLogin)
   // 个人中心需要登录
   if (to.name === 'Member') {

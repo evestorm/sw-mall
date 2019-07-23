@@ -200,9 +200,6 @@ line-height: 20px !important;
 color: #999 !important;
 }
 
-/* TODO: 坑：vant滑动cell的宽度设置了貌似不起作用，还需要在这里手动设置
-而且字体放在了span标签中，无法垂直居中对齐
-*/
 .van-swipe-cell__right {
 text-align: center;
 vertical-align: middle;
@@ -228,6 +225,17 @@ margin: 0 20px;
 }
 .sw-margin-lr-30 {
 margin: 0 30px;
+}
+
+input {
+-webkit-appearance: none;
+/*去除input默认样式*/
+}
+/* chrome记住密码输入框默认黄色背景消除 */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+-webkit-box-shadow: 0 0 0px 1000px #efefef inset;
 }
 ```
 

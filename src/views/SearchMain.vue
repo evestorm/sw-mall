@@ -303,6 +303,7 @@ export default {
 
       img
         max-width 120px
+        max-height 120px
         vertical-align middle
 
     .list-item-text
